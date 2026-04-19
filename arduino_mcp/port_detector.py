@@ -1,6 +1,6 @@
 import serial.tools.list_ports
 from typing import List, Dict, Optional
-from .platform_utils import platform_config
+from platform_utils import platform_config
 
 
 class PortDetector:

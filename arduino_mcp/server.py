@@ -3,12 +3,12 @@ import json
 from typing import Optional
 from pathlib import Path
 import glob
-from .cli_wrapper import ArduinoCLI, ArduinoCLIError
-from .port_detector import PortDetector
-from .image_converter import ImageConverter
-from .lint_wrapper import ArduinoLint
-from .platform_utils import platform_config, env_config
-from .serial_manager import SerialBuffer
+from cli_wrapper import ArduinoCLI, ArduinoCLIError
+from port_detector import PortDetector
+from image_converter import ImageConverter
+from lint_wrapper import ArduinoLint
+from platform_utils import platform_config, env_config
+from serial_manager import SerialBuffer
 
 mcp = FastMCP("Arduino MCP Server")
 
@@ -305,16 +305,11 @@ async def upload_sketch(sketch_path: str, fqbn: str, port: str, ctx: Context) ->
     arduino_cli_command("board attach -p COM3 -b arduino:avr:uno MySketch")
     
     Then upload without specifying FQBN/port each time.
-    See the sketch_project_workflow prompt for details.
+    See the sketch_project_workflow prompt for details. 
     """
     try:
         await ctx.info(f"Starting upload to {port}")
-        await ctx.report_progress(progress=0, total=100)
-        
-        await ctx.report_progress(progress=30, total=100)
         result = cli.upload(sketch_path, fqbn, port)
-        
-        await ctx.report_progress(progress=100, total=100)
         
         if result["success"]:
             await ctx.info("Upload successful")
@@ -328,14 +323,14 @@ async def upload_sketch(sketch_path: str, fqbn: str, port: str, ctx: Context) ->
 
 
 @mcp.tool(annotations={"readOnlyHint": False})
-async def create_new_sketch(sketch_name: str, path: Optional[str] = None, ctx: Context = None) -> str:
+async def create_new_sketch(sketch_path: str, ctx: Context = None) -> str:
     try:
         if ctx:
-            await ctx.info(f"Creating new sketch: {sketch_name}")
-        result = cli.sketch_new(sketch_name, path)
+            await ctx.info(f"Creating new sketch: {sketch_path}")
+        result = cli.sketch_new(sketch_path)
         if result["success"]:
             if ctx:
-                await ctx.info(f"Sketch {sketch_name} created successfully")
+                await ctx.info(f"Sketch {sketch_path} created successfully")
             return f"Sketch created successfully:\n{result['stdout']}"
         return f"Failed to create sketch:\n{result['stderr']}"
     except ArduinoCLIError as e:

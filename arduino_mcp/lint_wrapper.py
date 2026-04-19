@@ -3,7 +3,7 @@ import json
 import shutil
 from typing import Optional, Dict, Any
 from pathlib import Path
-from .platform_utils import env_config
+from platform_utils import env_config
 
 
 class ArduinoLintError(Exception):

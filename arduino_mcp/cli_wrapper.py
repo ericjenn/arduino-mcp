@@ -3,7 +3,7 @@ import json
 import shutil
 from typing import Optional, List, Dict, Any
 from pathlib import Path
-from .platform_utils import env_config
+from platform_utils import env_config
 
 
 class ArduinoCLIError(Exception):
@@ -137,12 +137,10 @@ class ArduinoCLI:
         return self.run_command(["compile", "--fqbn", fqbn, sketch_path])
     
     def upload(self, sketch_path: str, fqbn: str, port: str) -> Dict[str, Any]:
-        return self.run_command(["upload", "--fqbn", fqbn, "--port", port, sketch_path])
+        return self.run_command(["upload", "-v", "--fqbn", fqbn, "--port", port, sketch_path])
     
-    def sketch_new(self, sketch_name: str, path: Optional[str] = None) -> Dict[str, Any]:
-        args = ["sketch", "new", sketch_name]
-        if path:
-            args.extend(["--sketch-dir", path])
+    def sketch_new(self, sketch_path: str) -> Dict[str, Any]:
+        args = ["sketch", "new", "-f", sketch_path]
         return self.run_command(args)
     
     def monitor(self, port: str, config: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
